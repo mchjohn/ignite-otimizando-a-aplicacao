@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-
-import { SideBar } from './components/SideBar';
+import { useCallback, useEffect, useState } from 'react';
 import { Content } from './components/Content';
-
+import { SideBar } from './components/SideBar';
 import { api } from './services/api';
-
-import './styles/global.scss';
-
-import './styles/sidebar.scss';
 import './styles/content.scss';
+import './styles/global.scss';
+import './styles/sidebar.scss';
+
+
+
+
 
 interface GenreResponseProps {
   id: number;
@@ -42,18 +42,25 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    getMoviesList();
+    getGenreSelected();
+  }, [selectedGenreId]);
+
+  const getMoviesList = useCallback(() => {
     api.get<MovieProps[]>(`movies/?Genre_id=${selectedGenreId}`).then(response => {
       setMovies(response.data);
     });
+  }, [selectedGenreId])
 
+  const getGenreSelected = useCallback(() => {
     api.get<GenreResponseProps>(`genres/${selectedGenreId}`).then(response => {
       setSelectedGenre(response.data);
     })
-  }, [selectedGenreId]);
+  }, [selectedGenreId])
 
-  function handleClickButton(id: number) {
+    const handleClickButton = useCallback((id: number) => {
     setSelectedGenreId(id);
-  }
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
